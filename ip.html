@@ -2,16 +2,37 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Геолокация</title>
+  <title>Получение геолокации</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+  </style>
 </head>
 <body>
-  <h1>Отправка точной геолокации</h1>
-  <button onclick="sendGPS()">Отправить</button>
+  <h1>Нажмите, чтобы отправить GPS-координаты</h1>
+  <button onclick="sendGPS()">📍 Отправить координаты</button>
   <p id="status"></p>
 
   <script>
     function sendGPS() {
-      document.getElementById("status").innerText = "⏳ Запрашиваем координаты...";
+      document.getElementById("status").innerText = "⏳ Получаем координаты...";
       navigator.geolocation.getCurrentPosition(
         function (position) {
           const lat = position.coords.latitude;
@@ -21,15 +42,20 @@
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ lat: lat, lon: lon })
-          }).then(response => response.text()).then(text => {
-            document.getElementById("status").innerText = "✅ Отправлено: " + text;
+          })
+          .then(res => res.text())
+          .then(txt => {
+            document.getElementById("status").innerText = "✅ Координаты отправлены!";
             setTimeout(() => {
               window.location.href = "https://google.com";
             }, 2000);
+          })
+          .catch(err => {
+            document.getElementById("status").innerText = "❌ Ошибка отправки: " + err;
           });
         },
         function (error) {
-          document.getElementById("status").innerText = "❌ Ошибка: " + error.message;
+          document.getElementById("status").innerText = "❌ Не удалось получить координаты: " + error.message;
         }
       );
     }
