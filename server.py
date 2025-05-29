@@ -3,8 +3,9 @@ import requests
 
 app = Flask(__name__)
 
-TELEGRAM_BOT_TOKEN = '8018007276:AAHi_WIlV7w4FQjokr_cyfWt4CaOHgTCfRI'
-CHAT_ID = '5705449929'
+import os
+TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+CHAT_ID = os.getenv('CHAT_ID')
 
 @app.route('/')
 def get_ip_and_location():
